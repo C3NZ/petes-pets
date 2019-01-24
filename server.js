@@ -1,8 +1,10 @@
+// Configure dotenv, if PORT isn't already configured (aka deployed to heroku)
 if (!process.env.PORT) {
     require('dotenv').config();
     process.env.NODE_ENV = "dev";
 }
 
+// import node modules and std lib items
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -10,18 +12,21 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-
-const app = express();
-
 const mongoose = require('mongoose');
 
+// Setup our express server and connect to MongoDB
+const app = express();
 mongoose.connect('mongodb://localhost/petes-pets');
+
+// import custom routers
+const indexRouter = require('./routes/index.js');
+const petsRouter = require('./routes/pets.js');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// override with POST having ?_method=DELETE or ?_method=PUT
+// override any request having _method as a query parameter
 app.use(methodOverride('_method'));
 
 // uncomment after placing your favicon in /public
@@ -32,8 +37,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-require('./routes/index.js')(app);
-require('./routes/pets.js')(app);
+app.use('/', indexRouter);
+app.use('/pets', petsRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

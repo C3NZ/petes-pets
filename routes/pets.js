@@ -1,58 +1,65 @@
-// MODELS
+const express = require('express');
 const Pet = require('../models/pet');
 
-// PET ROUTES
-module.exports = (app) => {
+const router = express.Router();
 
-  // INDEX PET => index.js
-
-  // NEW PET
-  app.get('/pets/new', (req, res) => {
+// NEW PET
+router.get('/new', (req, res) => {
     res.render('pets-new');
-  });
+});
 
-  // CREATE PET
-  app.post('/pets', (req, res) => {
-    var pet = new Pet(req.body);
+// CREATE PET
+router.post('/', (req, res) => {
+    const pet = new Pet(req.body);
 
-    pet.save()
-      .then((pet) => {
-        res.redirect(`/pets/${pet._id}`);
-      })
-      .catch((err) => {
+    pet
+        .save()
+        .then((newPet) => {
+            // eslint-disable-next-line
+            res.redirect(`/pets/${newPet._id}`);
+        })
+        .catch((err) => {
         // Handle Errors
-      }) ;
-  });
+        });
+});
 
-  // SHOW PET
-  app.get('/pets/:id', (req, res) => {
-    Pet.findById(req.params.id).exec((err, pet) => {
-      res.render('pets-show', { pet: pet });
-    });
-  });
+// SHOW PET
+router.get('/:id', (req, res) => {
+    Pet
+        .findById(req.params.id)
+        .exec((err, pet) => {
+            res.render('pets-show', { pet });
+        });
+});
 
-  // EDIT PET
-  app.get('/pets/:id/edit', (req, res) => {
-    Pet.findById(req.params.id).exec((err, pet) => {
-      res.render('pets-edit', { pet: pet });
-    });
-  });
+// EDIT PET
+router.get('/:id/edit', (req, res) => {
+    Pet
+        .findById(req.params.id)
+        .exec((err, pet) => {
+            res.render('pets-edit', { pet });
+        });
+});
 
-  // UPDATE PET
-  app.put('/pets/:id', (req, res) => {
-    Pet.findByIdAndUpdate(req.params.id, req.body)
-      .then((pet) => {
-        res.redirect(`/pets/${pet._id}`)
-      })
-      .catch((err) => {
+// UPDATE PET
+router.put('/:id', (req, res) => {
+    Pet
+        .findByIdAndUpdate(req.params.id, req.body)
+        .then((pet) => {
+            return res.redirect(`/pets/${pet._id}`)
+        })
+        .catch((err) => {
         // Handle Errors
-      });
-  });
+        });
+});
 
-  // DELETE PET
-  app.delete('/pets/:id', (req, res) => {
-    Pet.findByIdAndRemove(req.params.id).exec((err, pet) => {
-      return res.redirect('/')
-    });
-  });
-}
+// DELETE PET
+router.delete('/:id', (req, res) => {
+    Pet
+        .findByIdAndRemove(req.params.id)
+        .exec((err, pet) => {
+            return res.redirect('/')
+        });
+});
+
+module.exports = router;

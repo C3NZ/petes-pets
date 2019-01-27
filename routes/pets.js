@@ -8,6 +8,16 @@ router.get('/new', (req, res) => {
     res.render('pets-new');
 });
 
+router.get('/search', (req, res) => {
+    const term = new RegExp(req.query.term, 'i'); 
+    // Allow users to search for both dog name and species
+    Pet
+        .find({ $or: [{ name: term }, { species: term }] })
+        .exec((err, pets) => {
+            res.render('pets-index', { pets });
+        })
+})
+
 // CREATE PET
 router.post('/', (req, res) => {
     const pet = new Pet(req.body);

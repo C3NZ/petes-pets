@@ -6,12 +6,12 @@ const router = express.Router();
 /* GET home page. */
 router.get('/', (req, res) => {
     // Retrieve paginated pets based on the current users page
-    const page = req.query.page || 1;
+    const currentPage = req.query.page || 1;
 
     Pet
-        .paginate({}, { page })
+        .paginate({}, { page: currentPage })
         .then((results) => {
-            res.render('pets-index', { pets: results.docs, pageCount: results.pages });
+            res.render('pets-index', { pets: results.docs, pageCount: results.pages, currentPage });
         });
 });
 

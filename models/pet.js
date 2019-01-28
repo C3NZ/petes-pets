@@ -18,21 +18,28 @@ const PetSchema = new Schema({
     },
     species: {
         type: String,
+        required: true,
     },
     birthday: {
         type: Date,
+        required: true
     },
     picUrl: {
         type: String,
+        required: true,
     },
     picUrlSq: {
         type: String,
+        required: true,
     },
     favoriteFood: {
         type: String,
+        required: true,
     },
     description: {
         type: String,
+        minlength: 140,
+        required: true,
     },
 },
 {

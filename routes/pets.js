@@ -9,14 +9,14 @@ router.get('/new', (req, res) => {
 });
 
 router.get('/search', (req, res, next) => {
-    const term = new RegExp(req.query.term, 'i'); 
+    const term = new RegExp(req.query.term, 'i');
     // Allow users to search for both dog name and species
     const currentPage = req.query.page || 1;
 
     Pet
         .paginate(
             { $or: [{ name: term }, { species: term }] },
-            { page: currentPage }
+            { page: currentPage },
         )
         .then((results) => {
             res.render('pets-index', {
@@ -27,20 +27,20 @@ router.get('/search', (req, res, next) => {
             });
         })
         .catch(err => next(err));
-})
+});
 
 // CREATE PET
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
     const pet = new Pet(req.body);
 
     pet
         .save()
         .then((newPet) => {
             // eslint-disable-next-line
-            res.redirect(`/pets/${newPet._id}`);
+            res.json({pet: newPet})
         })
         .catch((err) => {
-        // Handle Errors
+            return next(err);
         });
 });
 

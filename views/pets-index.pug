@@ -11,18 +11,28 @@ block content
                     small.text-muted= pet.species
                     p.card-text= pet.description
                     .text-right
-                        a.card-link(href=`/pets/${pet._id}`) View #{pet.name})
+                        a.card-link(href=`/pets/${pet._id}`) (View #{pet.name})
     nav.d-flex.justify-content-center(aria-label='Page navigation example')
         ul.pagination()
             if currentPage > 1
                 li.page-item()
-                    a.page-link(href=`/?page=${currentPage - 1}`) Previous
+                    if term 
+                        a.page-link(href=`/pets/search?term=${term}&page=${currentPage - 1}`) Previous
+                    else
+                        a.page-link(href=`/?page=${currentPage - 1}`) Previous
 
             - var pageNum = 1;
             while pageNum <= pageCount
                 li.page-item()
-                    a.page-link(href=`/?page=${pageNum}`)= pageNum++
+                    if term
+                        a.page-link(href=`/pets/search?term=${term}&page=${pageNum}`)= pageNum++
+                    else
+                        a.page-link(href=`/?page=${pageNum}`)= pageNum++
 
             if currentPage < pageCount
                 li.page-item()
-                    a.page-link(href=`?page=${parseInt(currentPage) + 1}`) Next
+                    if term
+                        a.page-link(href=`/pets/search?term=${term}&page=${parseInt(currentPage) + 1}`) Next
+                    else
+                        a.page-link(href=`?page=${parseInt(currentPage) + 1}`) Next
+

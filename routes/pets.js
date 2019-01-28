@@ -8,14 +8,25 @@ router.get('/new', (req, res) => {
     res.render('pets-new');
 });
 
-router.get('/search', (req, res) => {
+router.get('/search', (req, res, next) => {
     const term = new RegExp(req.query.term, 'i'); 
     // Allow users to search for both dog name and species
+    const currentPage = req.query.page || 1;
+
     Pet
-        .find({ $or: [{ name: term }, { species: term }] })
-        .exec((err, pets) => {
-            res.render('pets-index', { pets });
+        .paginate(
+            { $or: [{ name: term }, { species: term }] },
+            { page: currentPage }
+        )
+        .then((results) => {
+            res.render('pets-index', {
+                pets: results.docs,
+                pageCount: results.pages,
+                currentPage,
+                term: req.query.term,
+            });
         })
+        .catch(err => next(err));
 })
 
 // CREATE PET

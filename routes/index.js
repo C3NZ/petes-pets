@@ -5,11 +5,13 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res) => {
-    // Retrieve all pets 
+    // Retrieve paginated pets based on the current users page
+    const page = req.query.page || 1;
+
     Pet
-        .find()
-        .exec((err, pets) => {
-            res.render('pets-index', { pets: pets });    
+        .paginate({}, { page })
+        .then((results) => {
+            res.render('pets-index', { pets: results.docs, pageCount: results.pages });
         });
 });
 

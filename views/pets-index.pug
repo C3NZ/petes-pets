@@ -16,11 +16,11 @@ block content
         ul.pagination()
             li.page-item()
                 a.page-link(href='#') Previous
-            li.page-item()
-                a.page-link(href='#') 1
-            li.page-item()
-                a.page-link(href='#') 2
-            li.page-item()
-                a.page-link(href='#') 3
+
+            - var pageNum = 1;
+            while pageNum <= pageCount
+                li.page-item()
+                    a.page-link(href=`/?page=${pageNum}`)= pageNum++
+            
             li.page-item()
                 a.page-link(href='#') Next

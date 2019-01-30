@@ -28,9 +28,9 @@ const client = new Uploader(process.env.S3_BUCKET, {
             maxWidth: 300,
             aspect: '1:1',
             suffix: '-square',
-        }
+        },
     ],
-})
+});
 
 const router = express.Router();
 
@@ -63,15 +63,14 @@ router.get('/search', (req, res, next) => {
 // CREATE PET
 router.post('/', upload.single('avatar'), (req, res, next) => {
     const pet = new Pet(req.body);
-    console.log(req.file);
 
     if (req.file) {
         client.upload(req.file.path, (err, versions, meta) => {
             if (err) return res.status(400).json(err);
 
-            versions.foreach((image) => {
-                let urlArray = image.url.split()
-            })
+            // Looking at versions
+            console.log(versions);
+
         })
     }
     pet

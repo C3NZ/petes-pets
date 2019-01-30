@@ -3,16 +3,15 @@ if (document.getElementById('new-pet')) {
         e.preventDefault();
 
         // construct empty pet object and get all user inputs
-        const pet = {};
-        const inputs = document.querySelectorAll('.form-control');
+        const form = document.getElementById('new-pet');
+        const pet = new FormData(form);
 
-        // Pair all keys with their values
-        for (const input of inputs) {
-            pet[input.name] = input.value;
+        const requestHeaders = {
+            'Content-Type': 'multipart/form-data',
         }
 
         axios
-            .post('/pets', pet)
+            .post('/pets', pet, requestHeaders)
             .then((response) => {
                 console.log(response)
                 // Send the user to the new pet page

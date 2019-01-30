@@ -1,5 +1,36 @@
 const express = require('express');
 const Pet = require('../models/pet');
+const multer = require('multer');
+const Uploader = require('s3-uploader');
+
+// Middleware for handling multipart data 
+const upload = multer({ dest: 'uploads/' });
+
+const client = new Uploader(process.env.S3_BUCKET, {
+    aws: {
+        path: 'pets/avatar',
+        region: process.env.S3_REGION,
+        acl: 'public-read',
+        accessKey: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_KEY,
+    },
+    cleanup: {
+        versions: true,
+        original: true,
+    },
+    versions: [
+        {
+            maxWidth: 400,
+            aspect: '16:10',
+            suffix: '-standard',
+        },
+        {
+            maxWidth: 300,
+            aspect: '1:1',
+            suffix: '-square',
+        }
+    ],
+})
 
 const router = express.Router();
 
@@ -30,9 +61,19 @@ router.get('/search', (req, res, next) => {
 });
 
 // CREATE PET
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('avatar'), (req, res, next) => {
     const pet = new Pet(req.body);
+    console.log(req.file);
 
+    if (req.file) {
+        client.upload(req.file.path, (err, versions, meta) => {
+            if (err) return res.status(400).json(err);
+
+            versions.foreach((image) => {
+                let urlArray = image.url.split()
+            })
+        })
+    }
     pet
         .save()
         .then((newPet) => {

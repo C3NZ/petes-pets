@@ -22,13 +22,9 @@ const PetSchema = new Schema({
     },
     birthday: {
         type: Date,
-        required: true
-    },
-    picUrl: {
-        type: String,
         required: true,
     },
-    picUrlSq: {
+    avatarURL: {
         type: String,
         required: true,
     },

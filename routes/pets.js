@@ -3,7 +3,7 @@ const Pet = require('../models/pet');
 const multer = require('multer');
 const Uploader = require('s3-uploader');
 
-// Middleware for handling multipart data 
+// Middleware for handling multipart data
 const upload = multer({ dest: 'uploads/' });
 
 const client = new Uploader(process.env.S3_BUCKET, {
@@ -11,7 +11,7 @@ const client = new Uploader(process.env.S3_BUCKET, {
         path: 'pets/avatar',
         region: process.env.S3_REGION,
         acl: 'public-read',
-        accessKey: process.env.AWS_ACCESS_KEY_ID,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_KEY,
     },
     cleanup: {
@@ -64,24 +64,29 @@ router.get('/search', (req, res, next) => {
 router.post('/', upload.single('avatar'), (req, res, next) => {
     const pet = new Pet(req.body);
 
+    // Check if the user has sent over a file
     if (req.file) {
-        client.upload(req.file.path, (err, versions, meta) => {
+        // Upload the image to the bucket
+        client.upload(req.file.path, {}, (err, versions, meta) => {
             if (err) return res.status(400).json(err);
 
-            // Looking at versions
-            console.log(versions);
+            // Grab the bucket url and attach it to the avatar
+            const url = versions[0].url.split('-');
+            url.pop();
+            pet.avatarURL = url.join('-');
 
-        })
-    }
-    pet
-        .save()
-        .then((newPet) => {
-            // eslint-disable-next-line
-            res.json({pet: newPet})
-        })
-        .catch((err) => {
-            return next(err);
+            // Save the pet and send it to the user
+            pet
+                .save()
+                .then((newPet) => {
+                    // eslint-disable-next-line
+                    res.json({pet: newPet})
+                })
+                .catch((err) => {
+                    return next(err);
+                });
         });
+    }
 });
 
 // SHOW PET

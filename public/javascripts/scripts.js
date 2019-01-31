@@ -13,7 +13,6 @@ if (document.getElementById('new-pet')) {
         axios
             .post('/pets', pet, requestHeaders)
             .then((response) => {
-                console.log(response)
                 // Send the user to the new pet page
                 window.location.replace(`/pets/${response.data.pet._id}`);
             })

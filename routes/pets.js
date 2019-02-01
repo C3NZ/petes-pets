@@ -114,18 +114,23 @@ router.put('/:id', upload.single('avatar'), (req, res, next) => {
         // Upload the image to the bucket
         client.upload(req.file.path, {}, (err, versions, meta) => {
             if (err) return res.status(400).json(err);
-
             // Grab the bucket url and attach it to the avatar
             const url = versions[0].url.split('-');
             url.pop();
             req.body.avatarURL = url.join('-');
-        });
-    }
 
-    Pet
-        .findByIdAndUpdate(req.params.id, req.body)
-        .then(pet => res.redirect(`/pets/${pet._id}`))
-        .catch((err) => next(err));
+            Pet
+                .findByIdAndUpdate(req.params.id, req.body)
+                .then(pet => res.json({ pet }))
+                .catch((err) => next(err));
+        });
+    } else {
+        // No photo was uploaded, just update the rest of the pet   
+        Pet
+            .findByIdAndUpdate(req.params.id, req.body)
+            .then(pet => res.json({ pet }))
+            .catch((err) => next(err));
+    }
 });
 
 // DELETE PET

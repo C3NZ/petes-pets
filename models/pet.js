@@ -24,6 +24,12 @@ const PetSchema = new Schema({
         type: Date,
         required: true,
     },
+    picUrl: {
+        type: String,
+    },
+    picUrlSq: {
+        type: String,
+    },
     avatarURL: {
         type: String,
         required: true,

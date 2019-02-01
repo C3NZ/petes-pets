@@ -1,7 +1,7 @@
 // Configure dotenv, if PORT isn't already configured (aka deployed to heroku)
 if (!process.env.PORT) {
     require('dotenv').config();
-    process.env.NODE_ENV = "dev";
+    process.env.NODE_ENV = 'dev';
 }
 
 // import node modules and std lib items

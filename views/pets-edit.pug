@@ -5,7 +5,7 @@ block content
     .row.justify-content-center
         .col-sm-6
             legend New Pet
-            form(action="/pets/0?_method=PUT", method="POST")
+            form(action="/pets/" + pet._id + "?_method=PUT", method="POST")
                 .form-group
                     label Name
                     input.form-control(name="name" value=pet.name)
@@ -13,11 +13,8 @@ block content
                     label Species
                     input.form-control(name="species" value=pet.species)    
                 .form-group
-                    label Rectangular Image URL
-                    input.form-control(name="picUrl" value=pet.picUrl) 
-                .form-group
-                    label Square Image URL
-                    input.form-control(name="picUrlSq" value=pet.picUrlSq)
+                    label Avatar
+                    input.form-control(name="avatarURL", type='file')
                 .form-group
                     label Birthday
                     input.form-control(name="birthday" value=pet.birthday)    

@@ -108,15 +108,24 @@ router.get('/:id/edit', (req, res) => {
 });
 
 // UPDATE PET
-router.put('/:id', (req, res) => {
+router.put('/:id', upload.single('avatar'), (req, res, next) => {
+    // Check if the user has sent over a file
+    if (req.file) {
+        // Upload the image to the bucket
+        client.upload(req.file.path, {}, (err, versions, meta) => {
+            if (err) return res.status(400).json(err);
+
+            // Grab the bucket url and attach it to the avatar
+            const url = versions[0].url.split('-');
+            url.pop();
+            req.body.avatarURL = url.join('-');
+        });
+    }
+
     Pet
         .findByIdAndUpdate(req.params.id, req.body)
-        .then((pet) => {
-            return res.redirect(`/pets/${pet._id}`)
-        })
-        .catch((err) => {
-        // Handle Errors
-        });
+        .then(pet => res.redirect(`/pets/${pet._id}`))
+        .catch((err) => next(err));
 });
 
 // DELETE PET

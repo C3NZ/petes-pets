@@ -4,8 +4,8 @@ block content
     
     .row.justify-content-center
         .col-sm-6
-            legend New Pet
-            form(action="/pets/" + pet._id + "?_method=PUT", method="POST")
+            legend Edit Pet
+            form#edit-pet(action="#")
                 .form-group
                     label Name
                     input.form-control(name="name" value=pet.name)
@@ -14,7 +14,7 @@ block content
                     input.form-control(name="species" value=pet.species)    
                 .form-group
                     label Avatar
-                    input.form-control(name="avatarURL", type='file')
+                    input.form-control(name="avatar", type='file')
                 .form-group
                     label Birthday
                     input.form-control(name="birthday" value=pet.birthday)    
@@ -24,6 +24,8 @@ block content
                 .form-group
                     label Description
                     textarea.form-control(name="description")= pet.description
+                .form-group
+                    input.form-control(name="_id", type="hidden", value=pet._id)
                 button(type="submit").btn.btn-primary Save
             .text-right
                 form(action="/pets/0?_method=DELETE", method="POST")

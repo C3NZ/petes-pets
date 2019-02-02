@@ -24,6 +24,10 @@ const PetSchema = new Schema({
         type: Date,
         required: true,
     },
+    price: {
+        type: Number,
+        required: true,
+    },
     picUrl: {
         type: String,
     },

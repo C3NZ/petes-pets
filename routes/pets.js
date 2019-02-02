@@ -4,7 +4,6 @@ const multer = require('multer');
 const Uploader = require('s3-uploader');
 const stripe = require('stripe')(process.env.PRIVATE_STRIPE_API_KEY);
 
-
 // Middleware for handling multipart data
 const upload = multer({ dest: 'uploads/' });
 
@@ -173,8 +172,12 @@ router.post('/:id/purchase', (req, res, next) => {
                     description: `Purchased ${pet.name}, ${pet.species}`,
                     source: token,
                 })
-                .then(charge => res.redirect(`/pets/${req.params.id}`))
-                .catch( err => next(err))
+                .then(charge => {
+                    pet.purchasedAt = new Date();
+                    return pet.save()
+                })
+                .then(pPet => res.redirect(`/pets/${pPet._id}`))
+                .catch( err => next(err));
         })
 });
 

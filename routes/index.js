@@ -11,7 +11,14 @@ router.get('/', (req, res) => {
     Pet
         .paginate({}, { page: currentPage })
         .then((results) => {
-            res.render('pets-index', { pets: results.docs, pageCount: results.pages, currentPage });
+            // Attach all needed properties to res.locals
+            res.locals.pets = results.docs;
+            res.locals.pageCount = results.pages;
+            res.locals.currentPage = currentPage;
+            res.locals.PUBLIC_STRIPE_API_KEY = process.env.PUBLIC_STRIPE_API_KEY; 
+            
+            // Render the page
+            res.render('pets-index', res.locals);
         });
 });
 

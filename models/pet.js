@@ -28,6 +28,9 @@ const PetSchema = new Schema({
         type: Number,
         required: true,
     },
+    purchasedAt: {
+        type: Date,
+    },
     picUrl: {
         type: String,
     },
@@ -36,7 +39,6 @@ const PetSchema = new Schema({
     },
     avatarURL: {
         type: String,
-        required: true,
     },
     favoriteFood: {
         type: String,
@@ -44,7 +46,7 @@ const PetSchema = new Schema({
     },
     description: {
         type: String,
-        minlength: 140,
+        minlength: 60,
         required: true,
     },
 },

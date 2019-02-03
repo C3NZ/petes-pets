@@ -15,10 +15,13 @@ router.get('/', (req, res) => {
             res.locals.pets = results.docs;
             res.locals.pageCount = results.pages;
             res.locals.currentPage = currentPage;
-            res.locals.PUBLIC_STRIPE_API_KEY = process.env.PUBLIC_STRIPE_API_KEY; 
-            
-            // Render the page
-            res.render('pets-index', res.locals);
+
+            if (req.header('Content-Type') === 'application/json') {
+                res.json(res.locals)
+            } else {
+                // Render the page
+                res.render('pets-index', res.locals);
+            }
         });
 });
 

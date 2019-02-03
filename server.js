@@ -16,7 +16,7 @@ const mongoose = require('mongoose');
 
 // Setup our express server and connect to MongoDB
 const app = express();
-mongoose.connect('mongodb://localhost/petes-pets');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/petes-pets');
 
 // import custom routers
 const indexRouter = require('./routes/index.js');

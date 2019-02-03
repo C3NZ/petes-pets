@@ -3,6 +3,18 @@ const Pet = require('../models/pet');
 const multer = require('multer');
 const Uploader = require('s3-uploader');
 const stripe = require('stripe')(process.env.PRIVATE_STRIPE_API_KEY);
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+
+// Auth for mailgun
+const mgAuth = {
+    auth: {
+        api_key: process.env.NM_API_KEY,
+        domain: process.env.NM_DOMAIN,
+    },
+}
+
+const nodemailerMailgun = nodemailer.createTransport(mg(mgAuth));
 
 // Middleware for handling multipart data
 const upload = multer({ dest: 'uploads/' });

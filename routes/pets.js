@@ -185,8 +185,27 @@ router.post('/:id/purchase', (req, res, next) => {
                     source: token,
                 })
                 .then(charge => {
+                    
+                    const user = {
+                        email: req.body.stripeEmail,
+                        amount: charge.amount / 100,
+                        petName: pet.name,
+                    }
+                    
+                    return nodemailerMailgun.sendMail({
+                        from: 'no-reply@cenz.io',
+                        to: user.email,
+                        subject: 'Pet purchased',
+                        template: {
+                            name: 'mailtemplates/email.handlebars',
+                            engine: 'handlebars',
+                            context: user
+                        }
+                    });
+                }).then((info) => {
+                    console.log(info)
                     pet.purchasedAt = new Date();
-                    return pet.save()
+                    return pet.save();
                 })
                 .then(pPet => res.redirect(`/pets/${pPet._id}`))
                 .catch( err => next(err));

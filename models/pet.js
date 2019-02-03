@@ -54,6 +54,15 @@ const PetSchema = new Schema({
     timestamps: true,
 });
 
+
+// add indexes for our pet schema (without weights)
+PetSchema.index({
+    name: 'text',
+    species: 'text',
+    favoriteFood: 'text',
+    description: 'text',
+});
+
 // Enable mongoose paginate for the pet schema
 PetSchema.plugin(mongoosePaginate);
 

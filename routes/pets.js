@@ -54,30 +54,27 @@ router.get('/new', (req, res) => {
 
 // SEARCH FOR A NEW PET
 router.get('/search', (req, res, next) => {
-    const term = new RegExp(req.query.term, 'i');
     const currentPage = req.query.page || 1;
 
     // Allow users to search for both dog name and species
     Pet
-        .paginate(
-            { $or: [{ name: term }, { species: term }] },
-            { page: currentPage },
+        .find(
+            { $text: { $search: req.query.term } },
+            { score: { $meta: 'textScore' } }
         )
-        .then((results) => {
-            // Attach the found pets, current count, and the 
-            res.locals.pets = results.docs;
-            res.locals.pageCount = results.pages
-            res.locals.currentPage = currentPage;
-            res.locals.term = req.query.term;
+        .sort({ score: { $meta: 'textScore' } })
+        .limit(20)
+        .exec((err, pets) => {
+            if (err) return res.status(400).json(err);
 
-            res.render('pets-index', {
-                pets: results.docs,
-                pageCount: results.pages,
-                currentPage,
-                term: req.query.term,
-            });
+            if (req.header('Content-Type') === 'application/json') {
+                return res.json({ pets });
+            } else {
+                res.locals.pets = pets;
+                res.locals.term = req.query.term;
+                return res.render('pets-index', res.locals);
+            }
         })
-        .catch(err => next(err));
 });
 
 // CREATE PET
@@ -176,8 +173,7 @@ router.post('/:id/purchase', (req, res, next) => {
         .exec((err, pet) => {
             if (err) return next(err);
 
-            stripe
-                .charges
+            stripe.charges
                 .create({
                     amount: pet.price * 100,
                     currency: 'usd',
@@ -203,7 +199,6 @@ router.post('/:id/purchase', (req, res, next) => {
                         }
                     });
                 }).then((info) => {
-                    console.log(info)
                     pet.purchasedAt = new Date();
                     return pet.save();
                 })
